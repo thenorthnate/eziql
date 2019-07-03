@@ -33,6 +33,31 @@ func (edb *EzDB) Connect() error {
 
 }
 
+func (edb *EzDB) CreateAll() error {
+	for i, _ := range edb.tables {
+		err := edb.Create(i)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (edb *EzDB) Create(table interface{}) error {
+	if len(edb.tables) == 0 {
+		return errors.New("no tables defined for database")
+	}
+	switch v := table.(type) {
+	case int:
+		// this should be the index
+	case string:
+		// this is the table name
+	default:
+		// nothing specified
+	}
+	return nil
+}
+
 func (edb *EzDB) AddTable() {
 
 }

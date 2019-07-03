@@ -1,5 +1,7 @@
 package eziql
 
+// https://www.postgresql.org/docs/11/datatype.html
+
 import (
 	"fmt"
 	"strings"
@@ -47,16 +49,16 @@ func (ec EzCol) CreateColStr() string {
 	sqlStr := ec.name + " " + ec.ezt
 	if ec.precision >= 0 {
 		if ec.scale >= 0 {
-			sqlStr += "(" + fmt.Sprintf("%v", ec.precision) + ", " + fmt.Sprintf("%v", ec.scale) + ")"
+			sqlStr += ParenWrap(fmt.Sprintf("%v", ec.precision) + ", " + fmt.Sprintf("%v", ec.scale))
 		} else {
-			sqlStr += "(" + fmt.Sprintf("%v", ec.precision) + ")"
+			sqlStr += ParenWrap(fmt.Sprintf("%v", ec.precision))
 		}
 	}
 	for _, qual := range ec.qualifiers {
 		sqlStr += qual + " "
 	}
 	for _, con := range ec.constraints {
-		sqlStr += con.CreateConStr()
+		sqlStr += con.syntax + " "
 	}
 	return sqlStr  // "name varchar(150) NOT NULL"
 }
