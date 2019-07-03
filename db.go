@@ -36,25 +36,3 @@ func (edb *EzDB) Connect() error {
 func (edb *EzDB) AddTable() {
 
 }
-
-
-
-func (et *EzTable) Create() error {
-	createArray := []string{}
-	for i := 0; i < len(et.columns); i++ {
-		createColumnString := strings.Join([]string{et.columns[i], et.dtypes[i]}, " ")
-		createArray = append(createArray, createColumnString)
-	}
-	if et.uIdx != -1 {
-		// we want to add in the unique column
-		ccS := "CONSTRAINT " + et.name + "_pkey PRIMARY KEY (" + et.columns[et.uIdx] + ")"
-		createArray = append(createArray, ccS)
-	}
-	cStr := strings.Join(createArray, ", ")
-
-	sqlQuery = "CREATE TABLE " + et.name "(" cStr + ")"
-}
-
-func (et *EzTable) Insert(data []interface{}) string {
-	sqlQuery = "INSERT INTO userinfo(id, name, lastname, other) VALUE($1, $2, $3) returning uid;"
-}
