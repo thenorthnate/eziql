@@ -10,27 +10,55 @@ import (
 	"database/sql"
 )
 
-var columns = ["uid", "username", "departname", "created"]
-var dtypes = ["serial NOT NULL", "character varying(500) NOT NULL", "character varying(500) NOT NULL", "date"]
-
+// EzDB contains the specifics of the database being connected to
 type EzDB struct {
-	driver string
-	dbInfo string
+	Driver string
+	User string
+	Secret string
+	Host string
+	DBName string
+	SSLMode string
+	ConnStr string
 	database *sql.DB
 	tables *[]EzTable
 }
 
-func New(driver, username, password, dbname, sslmode string) EzDB {
-	info := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=%s", username, password, dbname, sslmode)
-	edb := EzDB{
-		driver: driver,
-		dbInfo: info,
+func (edb *EzDB) CompileConnStr() {
+	if len(edb.Host) > 0 {
+		// there is a remote URL specified in for the database
+		// "postgres://pqgotest:password@localhost/pqgotest?sslmode=verify-full"
+		edb.ConnStr = strings.Join([]string{
+			edb.Driver,
+			"://",
+			edb.User,
+			":",
+			edb.Secret,
+			"@",
+			edb.Host,
+			"/",
+			edb.DBName,
+		}, "")
+		if len(edb.SSLMode) > 0 {
+			// ssl mode provided
+			edb.ConnStr += "?sslmode" + edb.SSLMode
+		}
+	} else {
+		// no remote URL provided
+		edb.ConnStr = fmt.Sprintf("user=%s password=%s dbname=%s sslmode=%s", username, password, dbname, sslmode)
 	}
-	return edb
 }
 
 func (edb *EzDB) Connect() error {
-
+	if len(edb.connStr) == 0 {
+		// compile connection string if not already provided
+		edb.CompileConnStr()
+	}
+	db, err := sql.Open(edb.Driver, edb.ConnStr)
+	if err != nil {
+		return err
+	}
+	edb.database = db
+	return nil
 }
 
 func (edb *EzDB) CreateAll() error {

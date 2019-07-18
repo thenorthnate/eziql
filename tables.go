@@ -5,15 +5,15 @@ import (
 	"errors"
 )
 
-// EzTable contains unexported fields that represent the meta data for a SQL table
-type EzTable struct {
+// QlTable contains unexported fields that represent the meta data for a SQL table
+type QlTable struct {
 	name string  // table name
 	columns []EzCol
 	constraints []string
 }
 
 // NewTable returns the struct that contains necessary fields to create and manipulate a database table
-func NewTable(tableName, columns []EzCol) (EzTable, error) {
+func NewTable(tableName, columns []QlCol) (QlTable, error) {
 	if len(columns) != len(dtypes) {
 		return EzTable{}, errors.New("columns and dtypes must be the same length")
 	}
@@ -31,26 +31,26 @@ func NewTable(tableName, columns []EzCol) (EzTable, error) {
 		return EzTable{}, errors.New("uidCol must match one of the given column names")
 	}
 
-	et := EzTable{
+	qt := QlTable{
 		name: tableName,
 		columns: columns,
 		dtypes: dtypes,
 		uIdx: uColIdx,
 	}
-	return et, nil
+	return qt, nil
 }
 
 // AddUIDCol adds a uid column into the table for you
-func (et *EzTable) AddUIDCol() {
+func (et *QlTable) AddUIDCol() {
 
 }
 
 // AddTimeCol adds a time_created column into the table for you
-func (et *EzTable) AddTimeCol() {
+func (et *QlTable) AddTimeCol() {
 
 }
 
-func (et *EzTable) CreateTableStr() error {
+func (et *QlTable) CreateTableStr() error {
 	createArray := []string{}
 	for i := 0; i < len(et.columns); i++ {
 		createColumnString := strings.Join([]string{et.columns[i], et.dtypes[i]}, " ")
@@ -66,10 +66,10 @@ func (et *EzTable) CreateTableStr() error {
 	sqlQuery = "CREATE TABLE " + et.name "(" cStr + ")"
 }
 
-func (et *EzTable) InsertStr(data map[string]interface{}) string {
+func (et *QlTable) InsertStr(data map[string]interface{}) string {
 	sqlQuery = "INSERT INTO userinfo(id, name, lastname, other) VALUE($1, $2, $3) returning uid;"
 }
 
-func (et *EzTable) SelectStr(data map[string]interface{}) string {
+func (et *QlTable) SelectStr(data map[string]interface{}) string {
 	sqlQuery = "SELECT * FROM userinfo;"
 }

@@ -36,7 +36,26 @@ const (
 	EztTimezone = "with time zone"
 )
 
-type EzCol struct {
+var (
+	EzType = map[string]string{
+		"uint16": "smallint",
+		"uint32": "integer",
+		"int": "integer",
+		"uint64": "bigint",
+		"decimal": "decimal",
+		"real": "real",
+		"float32": "real",
+		"float64": "double precision",
+		"serial16": "smallserial",
+		"serial32": "serial",
+		"serial64": "bigserial",
+		"timestamp": "timestamp",
+		"date": "date",
+		"time": "time",
+	}
+)
+
+type QlCol struct {
 	name string
 	ezt string  // ez type
 	precision int
@@ -45,19 +64,19 @@ type EzCol struct {
 	constraints []EzCon
 }
 
-func (ec EzCol) CreateColStr() string {
-	sqlStr := ec.name + " " + ec.ezt
-	if ec.precision >= 0 {
-		if ec.scale >= 0 {
-			sqlStr += ParenWrap(fmt.Sprintf("%v", ec.precision) + ", " + fmt.Sprintf("%v", ec.scale))
+func (qc QlCol) CreateColStr() string {
+	sqlStr := qc.name + " " + qc.ezt
+	if qc.precision >= 0 {
+		if qc.scale >= 0 {
+			sqlStr += ParenWrap(fmt.Sprintf("%v", qc.precision) + ", " + fmt.Sprintf("%v", qc.scale))
 		} else {
-			sqlStr += ParenWrap(fmt.Sprintf("%v", ec.precision))
+			sqlStr += ParenWrap(fmt.Sprintf("%v", qc.precision))
 		}
 	}
-	for _, qual := range ec.qualifiers {
+	for _, qual := range qc.qualifiers {
 		sqlStr += qual + " "
 	}
-	for _, con := range ec.constraints {
+	for _, con := range qc.constraints {
 		sqlStr += con.syntax + " "
 	}
 	return sqlStr  // "name varchar(150) NOT NULL"

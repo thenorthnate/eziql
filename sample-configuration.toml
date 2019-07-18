@@ -1,0 +1,7 @@
+# This is an example of a sample configuration to configure a connection to a database
+
+[[tables]]
+    name = "example"
+    [[tables.columns]]
+        name = "ID"
+        ezType = "integer"
