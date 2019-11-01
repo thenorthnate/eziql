@@ -63,7 +63,7 @@ type QlCol struct {
 	constraints []EzCon
 }
 
-type Ql struct {
+type QlD struct {
 	u16  uint16
 	u32  uint32
 	u64  uint64
