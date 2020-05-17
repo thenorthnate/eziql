@@ -54,6 +54,12 @@ var (
 	}
 )
 
+type Qcol interface {
+	dtype() string
+	get() (interface{}, error)
+	set(val interface{}) error
+}
+
 type QlCol struct {
 	name        string
 	ezt         string // ez type
@@ -67,6 +73,9 @@ type QlD struct {
 	u16  uint16
 	u32  uint32
 	u64  uint64
+	s16  int16
+	s32  int32
+	s64  int64
 	f32  float32
 	f64  float64
 	char string

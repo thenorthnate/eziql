@@ -1,0 +1,22 @@
+version: '3'
+
+    services:
+        db:
+        image: postgres:9.6.18-alpine
+        environment:
+            - POSTGRES_DB=postgres
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgres
+    pgadmin:
+        image: dpage/pgadmin4:4.21
+        environment:
+            - PGADMIN_DEFAULT_EMAIL=nathantnorth@gmail.com
+            - PGADMIN_DEFAULT_PASSWORD=postgres
+            - PGADMIN_SERVER_JSON_FILE=/pgadmin4/servers.json
+
+        volumes:
+            - .:/pgadmin4/
+        ports:
+            - "80:8000"
+        depends_on:
+            - db
